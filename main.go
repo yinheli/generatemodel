@@ -3,8 +3,8 @@ package main
 import (
 	"database/sql"
 	"errors"
-	_ "github.com/go-sql-driver/mysql"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"os"
@@ -106,7 +106,7 @@ func columns(table string) ([]*Column, error) {
 	var cols []*Column
 	for rows.Next() {
 		var (
-			c Column
+			c        Column
 			nullable string
 		)
 		err = rows.Scan(&c.Name, &c.DataType, &c.Comment, &nullable)

@@ -8,8 +8,8 @@ import (
 
 func TestCamelCase(t *testing.T) {
 	data := map[string]string{
-		"a_": "a",
-		"app_name": "appName",
+		"a_":        "a",
+		"app_name":  "appName",
 		"_app_name": "AppName",
 	}
 
@@ -20,8 +20,8 @@ func TestCamelCase(t *testing.T) {
 
 func TestTitleCase(t *testing.T) {
 	data := map[string]string{
-		"a_": "A",
-		"app_name": "AppName",
+		"a_":        "A",
+		"app_name":  "AppName",
 		"_app_name": "AppName",
 	}
 

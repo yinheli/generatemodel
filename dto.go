@@ -8,6 +8,10 @@ import (
 	"github.com/golang/tools/imports"
 )
 
+var (
+	structTemplate *template.Template
+)
+
 type Table struct {
 	Name    string
 	Comment string
@@ -23,18 +27,8 @@ type Column struct {
 
 func (t *Table) ToStruct() ([]byte, error) {
 	var b bytes.Buffer
-	funcs := template.FuncMap{
-		"TitleCase": TitleCase,
-		"CamelCase": CamelCase,
-		"DataType":  DataType,
-	}
 
-	templateBox, err := rice.FindBox("template")
-	data, err := templateBox.Bytes("struct.text")
-	if err != nil {
-		return nil, err
-	}
-	tp, err := template.New("struct").Funcs(funcs).Parse(string(data))
+	tp, err := getStructTemplate()
 	if err != nil {
 		return nil, err
 	}
@@ -44,10 +38,35 @@ func (t *Table) ToStruct() ([]byte, error) {
 		return nil, err
 	}
 
-	data, err = imports.Process("", b.Bytes(), nil)
+	data, err := imports.Process("", b.Bytes(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return data, nil
+}
+
+func getStructTemplate() (*template.Template, error) {
+	if structTemplate != nil {
+		return structTemplate, nil
+	}
+
+	templateBox, err := rice.FindBox("template")
+	data, err := templateBox.Bytes("struct.text")
+	if err != nil {
+		return nil, err
+	}
+
+	funcs := template.FuncMap{
+		"TitleCase": TitleCase,
+		"CamelCase": CamelCase,
+		"DataType":  DataType,
+	}
+
+	structTemplate, err := template.New("struct").Funcs(funcs).Parse(string(data))
+	if err != nil {
+		return nil, err
+	}
+
+	return structTemplate, nil
 }

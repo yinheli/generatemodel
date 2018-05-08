@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	numberSequence = regexp.MustCompile(`([a-zA-Z])(\d+)([a-zA-Z]?)`)
+	numberSequence    = regexp.MustCompile(`([a-zA-Z])(\d+)([a-zA-Z]?)`)
 	numberReplacement = []byte(`$1 $2 $3`)
 )
 
