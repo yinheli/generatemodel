@@ -19,14 +19,15 @@ var (
 )
 
 func main() {
-	// $GOFILE
-
 	gofile := os.Getenv("GOFILE")
 	if gofile == "" {
 		l.Fatal("GOFILE env not find")
 	}
 
 	dir := path.Dir(gofile)
+
+	// overwrite
+	overwrite := os.Getenv("gm_overwrite") == "true"
 
 	if err := openDB(); err != nil {
 		l.Fatal(err)
@@ -42,7 +43,7 @@ func main() {
 
 		fileName := fmt.Sprintf("%s.go", strings.ToLower(table.Name))
 		file := path.Join(dir, fileName)
-		if _, err := os.Stat(file); err == nil {
+		if _, err := os.Stat(file); err == nil && !overwrite {
 			l.Printf("file %s exists ignore generate", fileName)
 			continue
 		}
