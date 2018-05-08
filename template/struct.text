@@ -1,0 +1,7 @@
+package model
+
+// {{.Name | TitleCase}} table: {{.Name}}  {{.Comment}}
+type {{.Name | TitleCase}} struct {
+    {{range .Columns}}{{.Name | TitleCase}} {{DataType .DataType .Nullable}} `json:"{{.Name | CamelCase}}"`
+    {{end}}
+}
