@@ -8,6 +8,7 @@ import (
 
 func init() {
 	os.Setenv("GOFILE", "/tmp/gen/tmp")
+	os.Setenv("gm_overwrite", "true")
 	os.Setenv("database_uri", "xpush:xpush@(192.168.4.23:3306)/xpush?charset=utf8&parseTime=True&loc=Local")
 }
 

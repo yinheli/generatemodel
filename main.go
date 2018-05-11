@@ -101,7 +101,7 @@ func tables() ([]*Table, error) {
 }
 
 func columns(table string) ([]*Column, error) {
-	rows, err := db.Query("select column_name Name, data_type, column_comment Comment, lower(is_nullable) is_nullable from information_schema.Columns t where t.table_schema=database() and t.table_name=?", table)
+	rows, err := db.Query("select column_name Name, column_type, column_comment Comment, lower(is_nullable) is_nullable from information_schema.Columns t where t.table_schema=database() and t.table_name=?", table)
 
 	var cols []*Column
 	for rows.Next() {

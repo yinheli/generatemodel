@@ -24,9 +24,27 @@ func DataType(dataType string, nullable bool) string {
 
 	goType := "string"
 
-	switch strings.TrimSpace(dataType) {
+	dataType = strings.ToLower(strings.TrimSpace(dataType))
+
+	newType := dataType
+	bracketIndex := strings.Index(newType, "(")
+	if bracketIndex > 0 {
+		newType = newType[0:bracketIndex]
+	}
+
+	if strings.Contains(dataType, "unsigned") {
+		newType = "u" + newType
+	}
+
+	switch newType {
 	case "int", "tinyint":
+		goType = "int32"
+	case "uint", "utinyint":
+		goType = "uint32"
+	case "bigint":
 		goType = "int64"
+	case "ubigint":
+		goType = "uint64"
 	case "date", "datetime", "timestamp":
 		goType = "time.Time"
 	case "float", "decimal", "double":
