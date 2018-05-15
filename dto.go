@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 
 	"github.com/GeertJohan/go.rice"
@@ -23,6 +24,7 @@ type Column struct {
 	Comment  string
 	DataType string
 	Nullable bool
+	GoType   string
 }
 
 func (t *Table) ToStruct() ([]byte, error) {
@@ -61,6 +63,7 @@ func getStructTemplate() (*template.Template, error) {
 		"TitleCase": TitleCase,
 		"CamelCase": CamelCase,
 		"DataType":  DataType,
+		"JsonTag":   JsonTag,
 	}
 
 	structTemplate, err := template.New("struct").Funcs(funcs).Parse(string(data))
@@ -69,4 +72,14 @@ func getStructTemplate() (*template.Template, error) {
 	}
 
 	return structTemplate, nil
+}
+
+func JsonTag(colunm string, goType string) string {
+	res := CamelCase(colunm)
+	switch goType {
+	case "uint32", "int64", "uint64",
+		"*uint32", "*int64", "*uint64":
+		res = fmt.Sprintf("%s,string", res)
+	}
+	return res
 }

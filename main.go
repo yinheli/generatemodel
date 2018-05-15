@@ -114,6 +114,7 @@ func columns(table string) ([]*Column, error) {
 			return nil, err
 		}
 		c.Nullable = nullable == "yes"
+		c.GoType = DataType(c.DataType, c.Nullable)
 		cols = append(cols, &c)
 	}
 	return cols, nil
