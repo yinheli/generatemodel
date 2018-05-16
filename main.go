@@ -94,6 +94,7 @@ func tables() ([]*Table, error) {
 		if err != nil {
 			return nil, err
 		}
+		t.TitleCaseName = TitleCase(t.Name)
 		tables = append(tables, &t)
 	}
 
@@ -115,6 +116,9 @@ func columns(table string) ([]*Column, error) {
 		}
 		c.Nullable = nullable == "yes"
 		c.GoType = DataType(c.DataType, c.Nullable)
+		c.TitleCaseName = TitleCase(c.Name)
+		c.CamelCaseName = CamelCase(c.Name)
+		c.Tag = Tag(c)
 		cols = append(cols, &c)
 	}
 	return cols, nil

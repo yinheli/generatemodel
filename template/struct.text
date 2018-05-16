@@ -1,8 +1,8 @@
 package model
 
-// {{.Name | TitleCase}} table: {{.Name}}  {{.Comment}}
-type {{.Name | TitleCase}} struct {
+// {{.TitleCaseName}} table: {{.Name}} {{.Comment}}
+type {{.TitleCaseName}} struct {
     {{range .Columns -}}
-        {{- .Name | TitleCase}} {{DataType .DataType .Nullable}} `json:"{{JsonTag .Name .GoType}}"{{if .Nullable}} validate:"required"{{end}}`
-    {{ end -}}
+        {{- .TitleCaseName}} {{.GoType}} {{.Tag}}
+    {{end -}}
 }

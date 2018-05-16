@@ -14,17 +14,21 @@ var (
 )
 
 type Table struct {
-	Name    string
-	Comment string
-	Columns []*Column
+	Name          string
+	TitleCaseName string
+	Comment       string
+	Columns       []*Column
 }
 
 type Column struct {
-	Name     string
-	Comment  string
-	DataType string
-	Nullable bool
-	GoType   string
+	Name          string
+	Comment       string
+	DataType      string
+	Nullable      bool
+	TitleCaseName string
+	CamelCaseName string
+	GoType        string
+	Tag           string
 }
 
 func (t *Table) ToStruct() ([]byte, error) {
@@ -60,14 +64,7 @@ func getStructTemplate() (*template.Template, error) {
 		return nil, err
 	}
 
-	funcs := template.FuncMap{
-		"TitleCase": TitleCase,
-		"CamelCase": CamelCase,
-		"DataType":  DataType,
-		"JsonTag":   JsonTag,
-	}
-
-	structTemplate, err := template.New("struct").Funcs(funcs).Parse(string(data))
+	structTemplate, err := template.New("struct").Parse(string(data))
 	if err != nil {
 		return nil, err
 	}
@@ -75,12 +72,25 @@ func getStructTemplate() (*template.Template, error) {
 	return structTemplate, nil
 }
 
+func Tag(column Column) string {
+	jsonTag := fmt.Sprintf(`json:"%s"`, JsonTag(column.CamelCaseName, column.GoType))
+	validateTag := ""
+	if !column.Nullable {
+		switch column.TitleCaseName {
+		case "Id", "CreatedAt", "UpdatedAt":
+		default:
+			validateTag = ` validate:"required"`
+		}
+	}
+
+	return fmt.Sprintf("`%s%s`", jsonTag, validateTag)
+}
+
 func JsonTag(colunm string, goType string) string {
-	res := CamelCase(colunm)
 	switch goType {
 	case "uint32", "int64", "uint64",
 		"*uint32", "*int64", "*uint64":
-		res = fmt.Sprintf("%s,string", res)
+		colunm = fmt.Sprintf("%s,string", colunm)
 	}
-	return res
+	return colunm
 }
