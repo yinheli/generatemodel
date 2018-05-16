@@ -2,6 +2,7 @@ package model
 
 // {{.Name | TitleCase}} table: {{.Name}}  {{.Comment}}
 type {{.Name | TitleCase}} struct {
-    {{range .Columns}}{{.Name | TitleCase}} {{DataType .DataType .Nullable}} `json:"{{JsonTag .Name .GoType}}"{{if .Nullable}} validate:"required"{{end}}`
-    {{end}}
+    {{range .Columns -}}
+        {{- .Name | TitleCase}} {{DataType .DataType .Nullable}} `json:"{{JsonTag .Name .GoType}}"{{if .Nullable}} validate:"required"{{end}}`
+    {{ end -}}
 }

@@ -42,6 +42,7 @@ func (t *Table) ToStruct() ([]byte, error) {
 
 	data, err := imports.Process("", b.Bytes(), nil)
 	if err != nil {
+		l.Println("origin data: ", string(b.Bytes()))
 		return nil, err
 	}
 
