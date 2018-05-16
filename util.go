@@ -19,7 +19,7 @@ func CamelCase(str string) string {
 	return toCamelCase(str, false)
 }
 
-func DataType(dataType string, nullable bool) string {
+func DataType(dataType string, nullable bool, typeMapping map[string]string) string {
 	dataType = strings.ToLower(strings.TrimSpace(dataType))
 
 	goType := "string"
@@ -49,6 +49,10 @@ func DataType(dataType string, nullable bool) string {
 		goType = "time.Time"
 	case "float", "decimal", "double":
 		goType = "float64"
+	}
+
+	if v, ok := typeMapping[goType]; ok {
+		goType = v
 	}
 
 	if nullable {

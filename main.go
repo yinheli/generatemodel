@@ -3,17 +3,22 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"flag"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 )
 
 var (
 	l = log.New(os.Stdout, "[generatemodel] ", log.LstdFlags)
+
+	typeMap     = flag.String("typeMap", "", "mapping std type to alias (type)")
+	typeMapping = make(map[string]string)
 
 	db *sql.DB
 )
@@ -28,6 +33,23 @@ func main() {
 
 	// overwrite
 	overwrite := os.Getenv("gm_overwrite") == "true"
+
+	flag.Parse()
+	if !flag.Parsed() {
+		l.Fatal("flag parse faild")
+	}
+
+	if *typeMap != "" {
+		validTypeMap := regexp.MustCompile(`.*:.*(,.*:.*)*`)
+		if !validTypeMap.MatchString(*typeMap) {
+			l.Fatal("typeMap param format error")
+		}
+
+		for _, v := range strings.Split(*typeMap, ",") {
+			item := strings.Split(v, ":")
+			typeMapping[item[0]] = item[1]
+		}
+	}
 
 	if err := openDB(); err != nil {
 		l.Fatal(err)
@@ -115,7 +137,7 @@ func columns(table string) ([]*Column, error) {
 			return nil, err
 		}
 		c.Nullable = nullable == "yes"
-		c.GoType = DataType(c.DataType, c.Nullable)
+		c.GoType = DataType(c.DataType, c.Nullable, typeMapping)
 		c.TitleCaseName = TitleCase(c.Name)
 		c.CamelCaseName = CamelCase(c.Name)
 		c.Tag = Tag(c)
